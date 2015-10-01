@@ -37,7 +37,7 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\Docuemnts\Requirement Definition.docx">
+    <None Include="..\Documents\Requirement Definition.docx">
       <Filter>Documents</Filter>
     </None>
   </ItemGroup>
