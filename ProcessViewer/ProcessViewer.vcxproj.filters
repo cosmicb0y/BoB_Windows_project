@@ -13,6 +13,9 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Documents">
+      <UniqueIdentifier>{2c7e5542-5052-4e1d-af32-399068d35bff}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -34,6 +37,8 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Requirement Definition.docx" />
+    <None Include="..\Docuemnts\Requirement Definition.docx">
+      <Filter>Documents</Filter>
+    </None>
   </ItemGroup>
 </Project>
