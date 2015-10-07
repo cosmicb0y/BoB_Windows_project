@@ -1,9 +1,5 @@
-#include <sstream>
-#include <string>
-#include <map>
+#include "stdafx.h"
 
-#include <TlHelp32.h>
-#include <Windows.h>
 
 class process
 {
@@ -17,6 +13,10 @@ public:
 		:_process_name(process_name), _ppid(ppid), _pid(pid), _creation_time(creation_time), _killed(killed)
 	{
 	}
+
+	bool kill(_In_ DWORD exit_code);
+	bool suspend() { return true; }
+	bool resume() { return true; }
 
 	std::wstring&	process_name()	{ return _process_name; }
 	DWORD			ppid()			{ return _ppid; }
@@ -44,6 +44,9 @@ public:
 	DWORD			find_process(_In_ const wchar_t* process_name);
 	const wchar_t*	get_process_name(_In_ DWORD pid);
 
+	DWORD			get_parent_pid(_In_ DWORD child_pid);
+	const wchar_t*	get_parent_name(_In_ DWORD child_pid);
+
 	void	iterate_process(_In_ fnproc_tree_callback callback, _In_ DWORD_PTR callback_tag);
 	void	iterate_process_tree(_In_ DWORD root_pid, _In_ fnproc_tree_callback, _In_ DWORD_PTR callback_tag);
 
@@ -56,5 +59,12 @@ public:
 	bool	kill_process_tree(_In_ DWORD root_pid);
 
 private:
+	void	add_process(_In_ DWORD ppid, _In_ DWORD pid, _In_ FILETIME& creation_time, _In_ const wchar_t* process_name);
+	void	print_process_tree(_In_ process& p, _In_ DWORD& depth);
+	void	kill_process_tree(_In_ process& root);
+	void	iterate_process_tree(_In_ process& root, _In_ fnproc_tree_callback callback, _In_ DWORD_PTR callback_tag);
+
+private:
 	process_map _proc_map;
 };
+

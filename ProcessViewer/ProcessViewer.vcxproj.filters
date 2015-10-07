@@ -38,6 +38,9 @@
     <ClCompile Include="ProcessViewer.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
+    <ClCompile Include="process_tree.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\Documents\Requirement Definition.docx">

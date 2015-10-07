@@ -4,9 +4,15 @@
 #include "stdafx.h"
 
 
+bool proc_tree_callback(_In_ process& process_info, _In_ DWORD_PTR callback_tag)
+{
+	printf("pid = %u, %u, %ws %llu\n", process_info.pid(), process_info.ppid(), process_info.process_name().c_str(), process_info.creation_time());
+		return true;
+}
+
 int main()
 {
-	LPTSTR szNotepad = _tcsdup(TEXT("notepad"));
+	/*LPTSTR szNotepad = _tcsdup(TEXT("notepad"));
 	STARTUPINFO si;
 	PROCESS_INFORMATION pi;
 
@@ -29,7 +35,22 @@ int main()
 		b = Process32Next(hSnap, &ppe);
 	}
 
-	CloseHandle(hSnap);
-	return 0;
+	CloseHandle(hSnap);*/
+
+	cprocess_tree proc_tree;
+	if (!proc_tree.build_process_tree()) return false;
+
+	// 프로세스 열거 테스트 (by callback)
+	//proc_tree.iterate_process(proc_tree_callback, 0);
+	//proc_tree.iterate_process_tree(proc_tree.find_process(L"System"), proc_tree_callback, 0);
+
+	// print 
+	proc_tree.print_process_tree((DWORD)596);
+
+	// 프로세스 종료 테스트	
+	//proc_tree.kill_process_tree(proc_tree.find_process(L"cmd.exe"));
+
+	return true;
+	
 }
 
