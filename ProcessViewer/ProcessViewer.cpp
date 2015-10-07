@@ -33,7 +33,7 @@ int main()
 		printf_s("process Name:%S\n", ppe.szExeFile);
 		printf_s("process ID:%6d\n", ppe.th32ProcessID);
 		b = Process32Next(hSnap, &ppe);
-	}
+	}나는 정식이다
 	adsfsadf
 	CloseHandle(hSnap);*/
 
