@@ -19,6 +19,7 @@ int main()
 	BOOL b = Process32First(hSnap, &ppe);
 	char pname[1024] = { 0 };
 	size_t convertedChars = 0;
+	int process_cnt = 0;
 	while (b)
 	{
 		printf_s("process Name:%S\n", ppe.szExeFile);
@@ -27,6 +28,7 @@ int main()
 		wcstombs_s(&convertedChars, pname, sizeof(ppe.szExeFile), ppe.szExeFile, _TRUNCATE);
 		if (strcmp(pname, "PING.EXE") == 0)
 		{
+			process_cnt++;
 			suspend_pid = ppe.th32ProcessID;
 		}
 	}
@@ -47,16 +49,29 @@ int main()
 	//proc_tree.kill_process_tree(proc_tree.find_process(L"cmd.exe"));
 
 	//프로세스 일시정지 테스트
-	printf("suspending ping.exe...\n\n");
-	proc.suspend(suspend_pid);
-	printf("success!! wait...\n");
-	Sleep(5000);
-
-	//프로세스 일시정지후 다시 실행
-	printf("resuming...\n");
-	proc.resume(suspend_pid);
-	printf("success!!!\n");
-	
+	if (process_cnt > 0)
+	{
+		printf("suspending ping.exe...\n\n");
+		if (!proc.suspend(suspend_pid))
+		{
+			printf("suspend fail!\n");
+			return -1;
+		}
+		printf("success!! wait...\n");
+		Sleep(5000);
+		//프로세스 일시정지후 다시 실행
+		printf("resuming...\n");
+		if (!proc.resume(suspend_pid))
+		{
+			printf("resume fail!\n");
+			return -1;
+		}
+		printf("success!!!\n");
+	}
+	else
+	{
+		printf("process가 존재하지 않습니다!\n");
+	}
 	return true;
 	
 }
