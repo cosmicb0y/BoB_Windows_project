@@ -16,7 +16,7 @@ public:
 
 	bool kill(_In_ DWORD exit_code);
 	bool suspend(_In_ DWORD processId);
-	bool resume() { return true; }
+	bool resume(_In_ DWORD processId);
 
 	std::wstring&	process_name()	{ return _process_name; }
 	DWORD			ppid()			{ return _ppid; }

@@ -47,7 +47,15 @@ int main()
 	//proc_tree.kill_process_tree(proc_tree.find_process(L"cmd.exe"));
 
 	//프로세스 일시정지 테스트
+	printf("suspending ping.exe...\n\n");
 	proc.suspend(suspend_pid);
+	printf("success!! wait...\n");
+	Sleep(5000);
+
+	//프로세스 일시정지후 다시 실행
+	printf("resuming...\n");
+	proc.resume(suspend_pid);
+	printf("success!!!\n");
 	
 	return true;
 	
