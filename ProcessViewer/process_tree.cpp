@@ -101,7 +101,32 @@ bool process::kill(_In_ DWORD exit_code)
 
 	return (true == _killed) ? true : false;
 }
+// suspend부분
 
+bool process::suspend(_In_ DWORD processId)
+{
+	HANDLE hThreadSnapshot = CreateToolhelp32Snapshot(TH32CS_SNAPTHREAD, 0); //모든 프로세스를 스냅
+
+	THREADENTRY32 threadEntry; //스레드 정보를 저장하는 구조체
+	threadEntry.dwSize = sizeof(THREADENTRY32); //사이즈를 구조체 사이즈로 초기화
+
+	Thread32First(hThreadSnapshot, &threadEntry); //스냅샷에서 첫번째 스레드를 읽어옴
+
+	do
+	{
+		if (threadEntry.th32OwnerProcessID == processId) //가져온 쓰레드의 pid가 전달한 pid와 같은지 확인
+		{
+			HANDLE hThread = OpenThread(THREAD_ALL_ACCESS, FALSE,
+				threadEntry.th32ThreadID); // 찾은 쓰레드를 TID를 통해 연다는!
+
+			SuspendThread(hThread);//쓰레드를 일시정지
+			CloseHandle(hThread);// 그리고 스레드 핸들을 닫는다능~
+		}
+	} while (Thread32Next(hThreadSnapshot, &threadEntry));// 맞을때까지 돈다돌아!
+
+	CloseHandle(hThreadSnapshot); // 끝나면 종료시키고
+	return true;
+}
 bool cprocess_tree::build_process_tree()
 {
 	_proc_map.clear();

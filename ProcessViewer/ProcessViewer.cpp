@@ -12,32 +12,28 @@ bool proc_tree_callback(_In_ process& process_info, _In_ DWORD_PTR callback_tag)
 //I'M BBAKBBAK
 int main()
 {
-	/*LPTSTR szNotepad = _tcsdup(TEXT("notepad"));
-	STARTUPINFO si;
-	PROCESS_INFORMATION pi;
-
-	ZeroMemory(&si, sizeof(STARTUPINFO));
-
-	CreateProcess(NULL, szNotepad, NULL, NULL, TRUE, NORMAL_PRIORITY_CLASS, NULL, NULL, &si, &pi);
-
-	ShellExecute(NULL, _tcsdup(TEXT("open")), szNotepad, NULL, NULL, SW_SHOW);
-
 	HANDLE hSnap = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0);
 	PROCESSENTRY32 ppe;
 	ppe.dwSize = sizeof(PROCESSENTRY32);
-
+	DWORD suspend_pid;
 	BOOL b = Process32First(hSnap, &ppe);
-
+	char pname[1024] = { 0 };
+	size_t convertedChars = 0;
 	while (b)
 	{
 		printf_s("process Name:%S\n", ppe.szExeFile);
 		printf_s("process ID:%6d\n", ppe.th32ProcessID);
 		b = Process32Next(hSnap, &ppe);
+		wcstombs_s(&convertedChars, pname, sizeof(ppe.szExeFile), ppe.szExeFile, _TRUNCATE);
+		if (strcmp(pname, "PING.EXE") == 0)
+		{
+			suspend_pid = ppe.th32ProcessID;
+		}
 	}
-	adsfsadf
-	CloseHandle(hSnap);*/
+	CloseHandle(hSnap);
 
 	cprocess_tree proc_tree;
+	process proc;
 	if (!proc_tree.build_process_tree()) return false;
 
 	// 프로세스 열거 테스트 (by callback)
@@ -50,6 +46,9 @@ int main()
 	// 프로세스 종료 테스트	
 	//proc_tree.kill_process_tree(proc_tree.find_process(L"cmd.exe"));
 
+	//프로세스 일시정지 테스트
+	proc.suspend(suspend_pid);
+	
 	return true;
 	
 }
