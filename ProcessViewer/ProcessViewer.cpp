@@ -28,6 +28,7 @@ int main()
 
 	DWORD choice;
 	int num, cnt=0;
+	
 	while (1)
 	{
 		printf_s("\n1-list    2-list process tree    3-kill    4-suspend    5-resume\ninput : ");
@@ -47,11 +48,11 @@ int main()
 			{
 				for (i = 0; i < cnt; i++)
 				{
-					if (ppids[i] < ppe.th32ProcessID)
+					if (ppids[i] < ppe.th32ParentProcessID)
 					{
 						continue;
 					}
-					else if (ppids[i] == ppe.th32ProcessID)
+					else if (ppids[i] == ppe.th32ParentProcessID)
 						break;
 
 					//root 노드
@@ -89,6 +90,7 @@ int main()
 		
 		else if (num == 2)//process 
 		{
+			int check = 0;
 			printf_s("select process : ");
 			scanf_s("%d",&choice);
 			hSnap = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0);
@@ -103,29 +105,30 @@ int main()
 			{
 				for (i = 0; i < cnt; i++)
 				{
-					if (ppids[i] < ppe.th32ProcessID)
+					if (ppids[i] < ppe.th32ParentProcessID)
 					{
 						continue;
 					}
-					else if (ppids[i] == ppe.th32ProcessID)
+					else if (ppids[i] == ppe.th32ParentProcessID)
 					{
-						break;						
-					}
-
-					//root 노드
-					else
-					{
-						if (ppe.th32ProcessID == choice)
+						if (check == 1)
+							break;
+						if (ppe.th32ParentProcessID == choice)
 						{
 							printf_s("\n");
 							proc_tree.build_process_tree();
 							proc_tree.print_process_tree((DWORD)choice);
 							printf_s("\n");
-							break;
+							check = 1;
 						}
+						break;
+					}
+
+					//root 노드
+					else
+					{
 						printf_s("Name:%S", ppe.szExeFile);
 						printf_s("    PID:%6d\n", ppe.th32ProcessID);
-						
 						break;
 					}
 				}
