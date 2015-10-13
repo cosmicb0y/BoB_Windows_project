@@ -26,7 +26,8 @@ int main()
 	cprocess_tree proc_tree;
 	process proc;
 
-	int num, choice, cnt=0;
+	DWORD choice;
+	int num, cnt=0;
 	while (1)
 	{
 		printf_s("\n1-list    2-list process tree    3-kill    4-suspend    5-resume\ninput : ");
@@ -40,6 +41,7 @@ int main()
 				ppids[cnt++] = ppe.th32ProcessID;
 				b = Process32Next(hSnap, &ppe);
 			}
+			process_cnt = cnt;
 			b = Process32First(hSnap, &ppe);
 			while (b)
 			{
@@ -63,6 +65,7 @@ int main()
 				b = Process32Next(hSnap, &ppe);
 			}
 			cnt = 0;
+			printf("the number of process : %d\n\n", process_cnt);
 			/*
 			hSnap = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0);
 			b = Process32First(hSnap, &ppe);
@@ -106,18 +109,23 @@ int main()
 					}
 					else if (ppids[i] == ppe.th32ProcessID)
 					{
-						if (ppe.th32ProcessID == (DWORD)choice)
-						{
-							proc_tree.print_process_tree((DWORD)choice);
-						}
 						break;						
 					}
 
 					//root ³ëµå
 					else
 					{
+						if (ppe.th32ProcessID == choice)
+						{
+							printf_s("\n");
+							proc_tree.build_process_tree();
+							proc_tree.print_process_tree((DWORD)choice);
+							printf_s("\n");
+							break;
+						}
 						printf_s("Name:%S", ppe.szExeFile);
 						printf_s("    PID:%6d\n", ppe.th32ProcessID);
+						
 						break;
 					}
 				}
@@ -148,6 +156,7 @@ int main()
 			proc.resume((DWORD)choice);
 			printf_s("resume ok\n");
 		}
+		
 	}
 
 	CloseHandle(hSnap);
