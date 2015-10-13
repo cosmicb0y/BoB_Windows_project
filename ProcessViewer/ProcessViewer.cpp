@@ -16,26 +16,69 @@ int main()
 	PROCESSENTRY32 ppe;
 	ppe.dwSize = sizeof(PROCESSENTRY32);
 	DWORD suspend_pid;
-	BOOL b = Process32First(hSnap, &ppe);
+	
 	char pname[1024] = { 0 };
 	size_t convertedChars = 0;
 	int process_cnt = 0;
-	while (b)
-	{
-		printf_s("process Name:%S\n", ppe.szExeFile);
-		printf_s("process ID:%6d\n", ppe.th32ProcessID);
-		b = Process32Next(hSnap, &ppe);
-		wcstombs_s(&convertedChars, pname, sizeof(ppe.szExeFile), ppe.szExeFile, _TRUNCATE);
-		if (strcmp(pname, "PING.EXE") == 0)
-		{
-			process_cnt++;
-			suspend_pid = ppe.th32ProcessID;
-		}
-	}
-	CloseHandle(hSnap);
-
+	BOOL b;
 	cprocess_tree proc_tree;
 	process proc;
+
+	int num, choice;
+	while (1)
+	{
+		printf_s("\n1-list    2-list process tree    3-kill    4-suspend    5-resume\ninput : ");
+		scanf_s("%d", &num);
+		if (num == 1)
+		{
+			b = Process32First(hSnap, &ppe);
+			while (b)//초반에 전부 보이진 않음
+			{
+				printf_s("process Name:%S", ppe.szExeFile);
+				printf_s("    PID:%6d\n", ppe.th32ProcessID);
+				b = Process32Next(hSnap, &ppe);
+				wcstombs_s(&convertedChars, pname, sizeof(ppe.szExeFile), ppe.szExeFile, _TRUNCATE);
+				/*if (strcmp(pname, "PING.EXE") == 0)
+				{
+					process_cnt++;
+					suspend_pid = ppe.th32ProcessID;
+				}*/
+			}
+		}
+		
+		else if (num == 2)//process 
+		{
+			while (b)
+			{
+				printf_s("구현해야함\n");
+			}
+		}
+		else if (num == 3)//kill
+		{
+			printf_s("kill process input : ");
+			scanf_s("%d",&choice);
+			proc.kill((DWORD)choice);
+			printf_s("killed ok\n");
+		}
+		else if (num == 4)//suspend
+		{
+			printf_s("suspend process input : ");
+			scanf_s("%d", &choice);
+			proc.suspend((DWORD)choice);
+			printf_s("suspend ok\n");
+		}
+		else if (num == 5)//resume
+		{
+			printf_s("resume process input : ");
+			scanf_s("%d", &choice);
+			proc.resume((DWORD)choice);
+			printf_s("resume ok\n");
+		}
+	}
+
+	CloseHandle(hSnap);
+
+	
 	if (!proc_tree.build_process_tree()) return false;
 
 	// 프로세스 열거 테스트 (by callback)
