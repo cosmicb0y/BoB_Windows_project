@@ -298,6 +298,15 @@ void cprocess_tree::print_process_tree(_In_ DWORD root_pid)
 	}
 }
 
+void cprocess_tree::print_process_tree(_In_ DWORD root_pid, _In_ DWORD x)
+{
+	process_map::iterator it = _proc_map.find(root_pid);
+	if (it != _proc_map.end())
+	{
+		_ASSERTE(1);
+	}
+}
+
 void cprocess_tree::print_process_tree(_In_ const wchar_t* root_process_name)
 {
 	_ASSERTE(NULL != root_process_name);

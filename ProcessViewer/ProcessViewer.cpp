@@ -52,10 +52,7 @@ int main()
 		
 		else if (num == 2)//process 
 		{
-			while (b)
-			{
-				printf_s("구현해야함\n");
-			}
+			proc_tree.print_process_tree(proc_tree.find_process(L"root"));
 		}
 		else if (num == 3)//kill
 		{

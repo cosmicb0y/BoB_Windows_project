@@ -52,6 +52,7 @@ public:
 
 	void	print_process_tree(_In_ DWORD root_pid);
 	void	print_process_tree(_In_ const wchar_t* root_process_name);
+	void	print_process_tree(_In_ DWORD root_pid_, _In_ DWORD x);
 
 	bool	kill_process(_In_ DWORD root_pid);
 	bool	kill_process(_In_ const wchar_t* process_name);
