@@ -48,14 +48,18 @@ int main()
 	getchar();
 
 	// print 
-	//proc_tree.print_process_tree((DWORD)596);
+	proc_tree.print_process_tree(proc_tree.find_process(L"wininit.exe"));
+	getchar();
+
 	ShellExecute(NULL, _tcsdup(TEXT("open")), szNotepad, NULL, NULL, SW_SHOW);
 
 	getchar();
+	
 	proc_tree.build_process_tree();
 	// 프로세스 종료 테스트	
 	proc_tree.kill_process_tree(proc_tree.find_process(L"winword.exe"));
-
+	
+	getchar();
 	
 	//프로세스 일시정지 테스트
 	if (process_cnt > 0)
