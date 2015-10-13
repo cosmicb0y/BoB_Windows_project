@@ -7,7 +7,7 @@
 bool proc_tree_callback(_In_ process& process_info, _In_ DWORD_PTR callback_tag)
 {
 	printf("pid = %u, %u, %ws %llu\n", process_info.pid(), process_info.ppid(), process_info.process_name().c_str(), process_info.creation_time());
-		return true;
+	return true;
 }
 //I'M BBAKBBAK
 int main()
@@ -16,21 +16,22 @@ int main()
 	PROCESSENTRY32 ppe;
 	ppe.dwSize = sizeof(PROCESSENTRY32);
 	DWORD suspend_pid;
-	
-	DWORD ppids[1024] = {0};
+
+	DWORD ppids[1024] = { 0 };
 
 	char pname[1024] = { 0 };
 	size_t convertedChars = 0;
-	int process_cnt = 0,i;
+	int process_cnt = 0, i;
 	BOOL b;
 	cprocess_tree proc_tree;
 	process proc;
 
 	DWORD choice;
-	int num, cnt=0;
-	
+	int num, cnt = 0;
+
 	while (1)
 	{
+		int check;
 		printf_s("\n1-list    2-list process tree    3-kill    4-suspend    5-resume\ninput : ");
 		scanf_s("%d", &num);
 		if (num == 1)
@@ -46,27 +47,23 @@ int main()
 			b = Process32First(hSnap, &ppe);
 			while (b)
 			{
+				check = 0;
 				for (i = 0; i < cnt; i++)
 				{
-					if (ppids[i] < ppe.th32ParentProcessID)
+					if (ppids[i] == ppe.th32ParentProcessID)
 					{
-						continue;
-					}
-					else if (ppids[i] == ppe.th32ParentProcessID)
-						break;
-
-					//root 노드
-					else
-					{
-						printf_s("Name:%S", ppe.szExeFile);
-						printf_s("    PID:%6d\n", ppe.th32ProcessID);
+						check = 1;
 						break;
 					}
+				}
+				if (check == 0) {
+					printf_s("Name:%S", ppe.szExeFile);
+					printf_s("    PID:%6d\n", ppe.th32ProcessID);
 				}
 				b = Process32Next(hSnap, &ppe);
 			}
 			cnt = 0;
-			printf("the number of process : %d\n\n", process_cnt);
+			printf("the number of all process : %d\n\n", process_cnt);
 			/*
 			hSnap = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0);
 			b = Process32First(hSnap, &ppe);
@@ -87,12 +84,12 @@ int main()
 			cnt = 0;
 			*/
 		}
-		
+
 		else if (num == 2)//process 
 		{
-			int check = 0;
+			int check = 0, check2 = 0;
 			printf_s("select process : ");
-			scanf_s("%d",&choice);
+			scanf_s("%d", &choice);
 			hSnap = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0);
 			b = Process32First(hSnap, &ppe);
 			while (b)
@@ -103,44 +100,38 @@ int main()
 			b = Process32First(hSnap, &ppe);
 			while (b)
 			{
+				check = 0;
 				for (i = 0; i < cnt; i++)
 				{
-					if (ppids[i] < ppe.th32ParentProcessID)
+					if (ppids[i] == ppe.th32ParentProcessID)
 					{
-						continue;
-					}
-					else if (ppids[i] == ppe.th32ParentProcessID)
-					{
-						if (check == 1)
-							break;
-						if (ppe.th32ParentProcessID == choice)
-						{
-							printf_s("\n");
-							proc_tree.build_process_tree();
-							proc_tree.print_process_tree((DWORD)choice);
-							printf_s("\n");
-							check = 1;
-						}
+						check = 1;
 						break;
 					}
-
-					//root 노드
-					else
+				}
+				//root 노드
+				if(check==0)
+				{
+					printf_s("Name:%S", ppe.szExeFile);
+					printf_s("    PID:%6d\n", ppe.th32ProcessID);
+					if (ppe.th32ProcessID == choice && check2==0)
 					{
-						printf_s("Name:%S", ppe.szExeFile);
-						printf_s("    PID:%6d\n", ppe.th32ProcessID);
-						break;
+						printf_s("\n");
+						proc_tree.build_process_tree();
+						proc_tree.print_process_tree((DWORD)choice);
+						printf_s("\n");
+						check2 = 1;
 					}
 				}
 				b = Process32Next(hSnap, &ppe);
 			}
 			cnt = 0;
-			
+
 		}
 		else if (num == 3)//kill
 		{
 			printf_s("kill process input : ");
-			scanf_s("%d",&choice);
+			scanf_s("%d", &choice);
 			//proc.kill((DWORD)choice);
 			proc_tree.kill_process_tree((DWORD)choice);
 			printf_s("killed ok\n");
@@ -159,12 +150,12 @@ int main()
 			proc.resume((DWORD)choice);
 			printf_s("resume ok\n");
 		}
-		
+
 	}
 
 	CloseHandle(hSnap);
 
-	
+
 	if (!proc_tree.build_process_tree()) return false;
 
 	// 프로세스 열거 테스트 (by callback)
@@ -202,6 +193,6 @@ int main()
 		printf("process가 존재하지 않습니다!\n");
 	}
 	return true;
-	
+
 }
 
