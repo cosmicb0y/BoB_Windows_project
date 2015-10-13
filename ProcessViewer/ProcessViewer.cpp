@@ -17,9 +17,11 @@ int main()
 	ppe.dwSize = sizeof(PROCESSENTRY32);
 	DWORD suspend_pid;
 	
+	DWORD ppids[1024] = {0};
+
 	char pname[1024] = { 0 };
 	size_t convertedChars = 0;
-	int process_cnt = 0;
+	int process_cnt = 0,i;
 	BOOL b;
 	cprocess_tree proc_tree;
 	process proc;
@@ -33,6 +35,37 @@ int main()
 		{
 			hSnap = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0);
 			b = Process32First(hSnap, &ppe);
+			while (b)
+			{
+				ppids[cnt++] = ppe.th32ProcessID;
+				b = Process32Next(hSnap, &ppe);
+			}
+			b = Process32First(hSnap, &ppe);
+			while (b)
+			{
+				for (i = 0; i < cnt; i++)
+				{
+					if (ppids[i] < ppe.th32ProcessID)
+					{
+						continue;
+					}
+					else if (ppids[i] == ppe.th32ProcessID)
+						break;
+
+					//root 노드
+					else
+					{
+						printf_s("Name:%S", ppe.szExeFile);
+						printf_s("    PID:%6d\n", ppe.th32ProcessID);
+						break;
+					}
+				}
+				b = Process32Next(hSnap, &ppe);
+			}
+			cnt = 0;
+			/*
+			hSnap = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0);
+			b = Process32First(hSnap, &ppe);
 			while (b)//초반에 전부 보이진 않음
 			{
 				printf_s("process Name:%S", ppe.szExeFile);
@@ -40,19 +73,58 @@ int main()
 				b = Process32Next(hSnap, &ppe);
 				cnt++;
 				wcstombs_s(&convertedChars, pname, sizeof(ppe.szExeFile), ppe.szExeFile, _TRUNCATE);
-				/*if (strcmp(pname, "PING.EXE") == 0)
+				if (strcmp(pname, "PING.EXE") == 0)
 				{
 					process_cnt++;
 					suspend_pid = ppe.th32ProcessID;
-				}*/
+				}
 			}
 			printf("The number of Prccesses : %d\n", cnt);
 			cnt = 0;
+			*/
 		}
 		
 		else if (num == 2)//process 
 		{
-			proc_tree.print_process_tree(proc_tree.find_process(L"root"));
+			printf_s("select process : ");
+			scanf_s("%d",&choice);
+			hSnap = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0);
+			b = Process32First(hSnap, &ppe);
+			while (b)
+			{
+				ppids[cnt++] = ppe.th32ProcessID;
+				b = Process32Next(hSnap, &ppe);
+			}
+			b = Process32First(hSnap, &ppe);
+			while (b)
+			{
+				for (i = 0; i < cnt; i++)
+				{
+					if (ppids[i] < ppe.th32ProcessID)
+					{
+						continue;
+					}
+					else if (ppids[i] == ppe.th32ProcessID)
+					{
+						if (ppe.th32ProcessID == (DWORD)choice)
+						{
+							proc_tree.print_process_tree((DWORD)choice);
+						}
+						break;						
+					}
+
+					//root 노드
+					else
+					{
+						printf_s("Name:%S", ppe.szExeFile);
+						printf_s("    PID:%6d\n", ppe.th32ProcessID);
+						break;
+					}
+				}
+				b = Process32Next(hSnap, &ppe);
+			}
+			cnt = 0;
+			
 		}
 		else if (num == 3)//kill
 		{
