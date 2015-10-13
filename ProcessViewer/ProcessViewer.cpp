@@ -12,7 +12,7 @@ bool proc_tree_callback(_In_ process& process_info, _In_ DWORD_PTR callback_tag)
 //I'M BBAKBBAK
 int main()
 {
-	HANDLE hSnap = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0);
+	HANDLE hSnap;
 	PROCESSENTRY32 ppe;
 	ppe.dwSize = sizeof(PROCESSENTRY32);
 	DWORD suspend_pid;
@@ -24,19 +24,21 @@ int main()
 	cprocess_tree proc_tree;
 	process proc;
 
-	int num, choice;
+	int num, choice, cnt=0;
 	while (1)
 	{
 		printf_s("\n1-list    2-list process tree    3-kill    4-suspend    5-resume\ninput : ");
 		scanf_s("%d", &num);
 		if (num == 1)
 		{
+			hSnap = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0);
 			b = Process32First(hSnap, &ppe);
 			while (b)//초반에 전부 보이진 않음
 			{
 				printf_s("process Name:%S", ppe.szExeFile);
 				printf_s("    PID:%6d\n", ppe.th32ProcessID);
 				b = Process32Next(hSnap, &ppe);
+				cnt++;
 				wcstombs_s(&convertedChars, pname, sizeof(ppe.szExeFile), ppe.szExeFile, _TRUNCATE);
 				/*if (strcmp(pname, "PING.EXE") == 0)
 				{
@@ -44,6 +46,8 @@ int main()
 					suspend_pid = ppe.th32ProcessID;
 				}*/
 			}
+			printf("The number of Prccesses : %d\n", cnt);
+			cnt = 0;
 		}
 		
 		else if (num == 2)//process 
@@ -57,7 +61,8 @@ int main()
 		{
 			printf_s("kill process input : ");
 			scanf_s("%d",&choice);
-			proc.kill((DWORD)choice);
+			//proc.kill((DWORD)choice);
+			proc_tree.kill_process_tree((DWORD)choice);
 			printf_s("killed ok\n");
 		}
 		else if (num == 4)//suspend
