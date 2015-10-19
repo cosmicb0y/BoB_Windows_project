@@ -28,7 +28,7 @@ int main()
 
 	DWORD choice;
 	int num, cnt = 0;
-
+	
 	while (1)
 	{
 		int check;
@@ -64,6 +64,7 @@ int main()
 			}
 			cnt = 0;
 			printf("the number of all process : %d\n\n", process_cnt);
+			
 			/*
 			hSnap = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0);
 			b = Process32First(hSnap, &ppe);
@@ -82,9 +83,9 @@ int main()
 			}
 			printf("The number of Prccesses : %d\n", cnt);
 			cnt = 0;
-			*/
+		*/	
 		}
-
+		
 		else if (num == 2)//process 
 		{
 			int check = 0, check2 = 0;
@@ -156,20 +157,20 @@ int main()
 	CloseHandle(hSnap);
 
 
-	if (!proc_tree.build_process_tree()) return false;
-
+	//if (!proc_tree.build_process_tree()) return false;
+	
 	// 프로세스 열거 테스트 (by callback)
 	//proc_tree.iterate_process(proc_tree_callback, 0);
 	//proc_tree.iterate_process_tree(proc_tree.find_process(L"System"), proc_tree_callback, 0);
 
 	// print 
-	proc_tree.print_process_tree((DWORD)596);
+	//proc_tree.print_process_tree((DWORD)596);
 
 	// 프로세스 종료 테스트	
 	//proc_tree.kill_process_tree(proc_tree.find_process(L"cmd.exe"));
 
 	//프로세스 일시정지 테스트
-	if (process_cnt > 0)
+	/*if (process_cnt > 0)
 	{
 		printf("suspending ping.exe...\n\n");
 		if (!proc.suspend(suspend_pid))
@@ -191,7 +192,8 @@ int main()
 	else
 	{
 		printf("process가 존재하지 않습니다!\n");
-	}
+	}*/
+	printf("test");
 	return true;
 
 }
