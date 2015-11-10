@@ -193,7 +193,7 @@ int main()
 	{
 		printf("process가 존재하지 않습니다!\n");
 	}*/
-	printf("test");
+	
 	return true;
 
 }
